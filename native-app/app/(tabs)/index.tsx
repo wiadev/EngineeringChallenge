@@ -6,6 +6,10 @@ import {useMachineData} from '../useMachineData';
 import {useCallback, useState} from 'react';
 import {PartsOfMachine} from '../../components/PartsOfMachine';
 import {MachineScore} from '../../components/MachineScore';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { RootState } from '../../store';
+import { resetMachineStatus } from '../../store/features/machine/machineSlice';
+import { useCalculateHealthMutation } from '../../store/features/api/apiSlice';
 
 let apiUrl: string =
   'https://fancy-dolphin-65b07b.netlify.app/api/machine-health';
@@ -17,41 +21,14 @@ if (__DEV__) {
 }
 
 export default function StateScreen() {
-  const {machineData, resetMachineData, loadMachineData, setScores} =
-    useMachineData();
-
-  //Doing this because we're not using central state like redux
-  useFocusEffect(
-    useCallback(() => {
-      loadMachineData();
-    }, []),
-  );
-
-  const calculateHealth = useCallback(async () => {
-    try {
-      const response = await axios.post(apiUrl, {
-        machines: machineData?.machines,
-      });
-
-      if (response.data?.factory) {
-        setScores(response.data);
-      }
-    } catch (error) {
-      console.error(error);
-      console.log(
-        `There was an error calculating health. ${
-          error.toString() === 'AxiosError: Network Error'
-            ? 'Is the api server started?'
-            : error
-        }`,
-      );
-    }
-  }, [machineData]);
+  const dispatch = useAppDispatch();
+  const machineData = useAppSelector((state: RootState) => state.machine.status);
+  const [ calculateHealth, result ] = useCalculateHealthMutation();
 
   return (
     <View style={styles.container}>
       <View style={styles.separator} />
-      {!machineData && (
+      {Object.keys(machineData).length === 0 && (
         <Link href='/two' style={styles.link}>
           <Text style={styles.linkText}>
             Please log a part to check machine health
@@ -62,19 +39,19 @@ export default function StateScreen() {
         <>
           <PartsOfMachine
             machineName={'Welding Robot'}
-            parts={machineData?.machines?.weldingRobot}
+            parts={machineData?.weldingRobot}
           />
           <PartsOfMachine
             machineName={'Assembly Line'}
-            parts={machineData?.machines?.assemblyLine}
+            parts={machineData?.assemblyLine}
           />
           <PartsOfMachine
             machineName={'Painting Station'}
-            parts={machineData?.machines?.paintingStation}
+            parts={machineData?.paintingStation}
           />
           <PartsOfMachine
             machineName={'Quality Control Station'}
-            parts={machineData?.machines?.qualityControlStation}
+            parts={machineData?.qualityControlStation}
           />
           <View
             style={styles.separator}
@@ -83,18 +60,18 @@ export default function StateScreen() {
           />
           <Text style={styles.title}>Factory Health Score</Text>
           <Text style={styles.text}>
-            {machineData?.scores?.factory
-              ? machineData?.scores?.factory
+            {result?.data?.factory
+              ? result?.data?.factory
               : 'Not yet calculated'}
           </Text>
-          {machineData?.scores?.machineScores && (
+          {result?.data?.machineScores && (
             <>
               <Text style={styles.title2}>Machine Health Scores</Text>
-              {Object.keys(machineData?.scores?.machineScores).map((key) => (
+              {Object.keys(result?.data?.machineScores).map((key) => (
                 <MachineScore
                   key={key}
                   machineName={key}
-                  score={machineData?.scores?.machineScores[key]}
+                  score={result?.data?.machineScores[key]}
                 />
               ))}
             </>
@@ -106,11 +83,14 @@ export default function StateScreen() {
         lightColor='#eee'
         darkColor='rgba(255,255,255,0.1)'
       />
-      <Button title='Calculate Health' onPress={calculateHealth} />
+      <Button title='Calculate Health' onPress={() => calculateHealth(machineData)} />
       <View style={styles.resetButton}>
         <Button
           title='Reset Machine Data'
-          onPress={async () => await resetMachineData()}
+          onPress={() => {
+            dispatch(resetMachineStatus());
+            result.reset();
+          }}
           color='#FF0000'
         />
       </View>

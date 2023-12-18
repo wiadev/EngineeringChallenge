@@ -83,6 +83,9 @@ android {
 
     namespace 'com.machinehealth.app'
     defaultConfig {
+// @generated begin react-native-auth0-manifest-placeholder - expo prebuild (DO NOT MODIFY) sync-5214490d93bdd252e794ccb7efad0e6467771f19
+manifestPlaceholders = [auth0Domain: "dev-508w33yg5pe4k7ak.us.auth0.com", auth0Scheme: "com.machinehealth.app.auth0"]
+// @generated end react-native-auth0-manifest-placeholder
         applicationId 'com.machinehealth.app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion

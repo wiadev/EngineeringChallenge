@@ -3,16 +3,25 @@ import {Button, Platform, StyleSheet, TextInput} from 'react-native';
 
 import {Text, View} from './Themed';
 import {MachineType} from '../data/types';
-import {useMachineData} from '../app/useMachineData';
-import {useFocusEffect} from 'expo-router';
 import Picker from './Picker';
+import { useAppDispatch } from '../store/hooks';
+import { saveMachineStatus } from '../store/features/machine/machineSlice';
+import machinesData from '../data/machineData.json';
 
 export default function EditScreenInfo({path}: {path: string}) {
+  const dispatch = useAppDispatch();
   const [machineName, setMachineName] = useState('');
   const [partName, setPartName] = useState('');
   const [partValue, setPartValue] = useState('');
   const [isSaved, setIsSaved] = useState(false);
-  const {machineData, updateMachineData, loadMachineData} = useMachineData();
+  const partNames = machinesData[machineName] ? Object.keys(machinesData[machineName]).filter((key) => key !== "name").map((key) => {
+    const k = key.replace(/([A-Z])/g, " $1");
+    const label = k.charAt(0).toUpperCase() + k.slice(1);
+    return {
+      value: key,
+      label,
+    }
+  }) : [];
 
   const machineNames = [
     {label: 'Welding Robot', value: MachineType.WeldingRobot},
@@ -24,91 +33,19 @@ export default function EditScreenInfo({path}: {path: string}) {
     },
   ];
 
-  const partNames = [
-    {value: 'arcStability', label: 'Arc Stability'},
-    {
-      value: 'coolingEfficiency',
-      label: 'Cooling Efficiency',
-    },
-    {value: 'electrodeWear', label: 'Electrode Wear'},
-    {value: 'seamWidth', label: 'Seam Width'},
-    {
-      value: 'shieldingPressure',
-      label: 'Shielding Pressure',
-    },
-    {value: 'vibrationLevel', label: 'Vibration Level'},
-    {value: 'wireFeedRate', label: 'Wire Feed Rate'},
-    {
-      value: 'colorConsistency',
-      label: 'Color Consistency',
-    },
-    {value: 'flowRate', label: 'Flow Rate'},
-    {
-      value: 'nozzleCondition',
-      label: 'Nozzle Condition',
-    },
-    {value: 'pressure', label: 'Pressure'},
-    {
-      value: 'alignmentAccuracy',
-      label: 'Alignment Accuracy',
-    },
-    {value: 'beltSpeed', label: 'Belt Speed'},
-    {
-      value: 'fittingTolerance',
-      label: 'Fitting Tolerance',
-    },
-    {value: 'speed', label: 'Speed'},
-    {
-      value: 'cameraCalibration',
-      label: 'Camera Calibration',
-    },
-    {
-      value: 'criteriaSettings',
-      label: 'Criteria Settings',
-    },
-    {
-      value: 'lightIntensity',
-      label: 'Light Intensity',
-    },
-    {
-      value: 'softwareVersion',
-      label: 'Software Version',
-    },
-  ];
-
   const apiUrl: string = `http://${
     Platform?.OS === 'android' ? '10.0.2.2' : 'localhost'
   }:3001/machine-health`;
 
-  const savePart = useCallback(async () => {
-    try {
-      const newMachineData = machineData
-        ? JSON.parse(JSON.stringify(machineData))
-        : {machines: {}}; // Deep copy machine parts
-
-      if (!newMachineData.machines[machineName]) {
-        newMachineData.machines[machineName] = {};
-      }
-
-      newMachineData.machines[machineName][partName] = partValue;
-
-      await updateMachineData(newMachineData);
+  const savePart = () => {
+    if (machineName && partName && partValue) {
+      dispatch(saveMachineStatus({ machineName, partName, partValue }));
       setIsSaved(true);
       setTimeout(() => {
         setIsSaved(false);
       }, 2000);
-    } catch (error) {
-      console.error(error);
-      throw error; // Handle API errors appropriately
     }
-  }, [machineData, updateMachineData, machineName, partName, partValue]);
-
-  //Doing this because we're not using central state like redux
-  useFocusEffect(
-    useCallback(() => {
-      loadMachineData();
-    }, []),
-  );
+  };
 
   return (
     <View>

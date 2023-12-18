@@ -28,7 +28,13 @@
       "package": "com.machinehealth.app"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "react-native-auth0",
+        {
+          "domain": "dev-508w33yg5pe4k7ak.us.auth0.com"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
