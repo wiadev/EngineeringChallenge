@@ -1,5 +1,17 @@
 # Factory Health Monitor - Authentication, State Management, and Persistence
 
+## Chagnes made
+
+- integrated Auth0 SDK for authentication and session management
+    The Auth0 SDK offers a straightforward approach to implementing authentication and authorization, while also providing flexibility to customize everything according to our specific requirements.
+- used Redux for state mangement and Redux Toolkit to integrate redux.
+    Redux Toolkit simplifies common use cases like store setup, creating reducers, immutable update logic, and etc.
+    It also allows to write "mutative" immutable update logic, and even create entire "slices" of state automatically.
+    RTK Query is a powerful tool for API integration, offering built-in caching functionalities as well.
+- used TypeORM as an ORM and PostgreSQL as a database.
+
+**Note:**
+The `readme.md` files for both backend and native-app have been updated. Please take a look at those files too.
 ## Overview
 
 You are provided with a starter project that includes a React Native mobile app and a backend API, each in their respective folders. Each folder contains a README with instructions on how to run the builds. The goal of this coding challenge is to add authentication and session management to the app, improve the state management of the data returned by the API, and implement a persistence layer on the backend. When a user logs in, their history of data points and scores should be retrieved and displayed.

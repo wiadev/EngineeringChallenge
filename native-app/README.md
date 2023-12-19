@@ -25,10 +25,11 @@ yarn
 To run the app, use the following command:
 
 ```bash
-yarn start
+yarn ios
 ```
 
-This will launch the Expo development server, and you can access the app on your device using the Expo Go app or an emulator. You can hit `i` or `a` on the keyboard to launch the ios or android app respectively.
+~~This will launch the Expo development server, and you can access the app on your device using the Expo Go app or an emulator. You can hit `i` or `a` on the keyboard to launch the ios or android app respectively.~~
+[Auth0](https://auth0.com/) SDK is not compatible with "Expo Go" app. It is compatible only with Custom Dev Client and EAS builds, so use `yarn ios` or `yarn android` instead of `yarn start`.
 
 ## Project Structure
 

@@ -25,6 +25,7 @@ const checkJwt = auth({
   issuerBaseURL: `https://dev-508w33yg5pe4k7ak.us.auth0.com/`,
 });
 
+// Custom middleware. When used, parse the Access token and add email to the req.
 const decodeToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const userInfoRes = await fetch(`https://dev-508w33yg5pe4k7ak.us.auth0.com/userinfo`, {
     headers: {Authorization: req.header('authorization') ?? ""}
@@ -88,6 +89,7 @@ app.post('/machine-health', checkJwt, decodeToken, async (req: AuthRequest, res:
   }
 });
 
+// Endpoint to save a users's data point
 app.post('/data-point', checkJwt, decodeToken, async (req: AuthRequest, res: Response) => {
   const {
     machineName,
@@ -116,6 +118,7 @@ app.post('/data-point', checkJwt, decodeToken, async (req: AuthRequest, res: Res
   }
 });
 
+// Endpoint to retrieve a user's historical data points
 app.get('/data-point', checkJwt, decodeToken, async (req: AuthRequest, res: Response) => {
   try {
     const dataSource = await db();  
@@ -127,6 +130,7 @@ app.get('/data-point', checkJwt, decodeToken, async (req: AuthRequest, res: Resp
   }
 });
 
+// Endpoint to retrieve a user's historical scores
 app.get('/score', checkJwt, decodeToken, async (req: AuthRequest, res: Response) => {
   try {
     const dataSource = await db();  

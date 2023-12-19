@@ -8,6 +8,7 @@ Before you get started, make sure you have the following prerequisites installed
 
 - Node.js: [Download Node.js](https://nodejs.org/)
 - Yarn (optional but recommended, can use NPM instead): [Install Yarn](https://classic.yarnpkg.com/en/docs/install/)
+- Postgresapp (the easiest way to setup PostgreSQ server locally): [Download Postgres app](https://classic.yarnpkg.com/en/docs/install/)
 
 ## Installation
 
@@ -24,6 +25,18 @@ Follow these steps to set up the BellSant Machine Health API:
    ```bash
    yarn
    ```
+3. Configure PostgreSQL environment variables:
+    in `/backend/data-source.ts` file
+    ```bash
+    export const options: DataSourceOptions = {
+      type: "postgres",
+      host: "localhost",
+      port: 5432,
+      username: "admin",
+      password: "",
+      database: "admin",
+      ...
+    ```
 
 ## Usage
 
@@ -57,6 +70,9 @@ The response will include the machine name and its health score.
 ### API Endpoints
 
 - `POST /machine-health`: Calculate the health of a machine based on provided data.
+- `POST /data-point`: Endpoint to save a users's data point.
+- `GET /data-point`: Endpoint to retrieve a user's historical data points.
+- `GET /score`: Endpoint to retrieve a user's historical scores.
 
 ## Testing
 
