@@ -6,10 +6,12 @@ import {MachineType} from '../data/types';
 import Picker from './Picker';
 import { useAppDispatch } from '../store/hooks';
 import { saveMachineStatus } from '../store/features/machine/machineSlice';
+import { useRecordDataPointMutation } from '../store/features/api/apiSlice';
 import machinesData from '../data/machineData.json';
 
 export default function EditScreenInfo({path}: {path: string}) {
   const dispatch = useAppDispatch();
+  const [ recordDataPoint, result ] = useRecordDataPointMutation();
   const [machineName, setMachineName] = useState('');
   const [partName, setPartName] = useState('');
   const [partValue, setPartValue] = useState('');
@@ -37,8 +39,9 @@ export default function EditScreenInfo({path}: {path: string}) {
     Platform?.OS === 'android' ? '10.0.2.2' : 'localhost'
   }:3001/machine-health`;
 
-  const savePart = () => {
+  const savePart = async () => {
     if (machineName && partName && partValue) {
+      await recordDataPoint({ machineName, partName, partValue });
       dispatch(saveMachineStatus({ machineName, partName, partValue }));
       setIsSaved(true);
       setTimeout(() => {

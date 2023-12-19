@@ -14,6 +14,14 @@ export const mutations = (builder: EndpointBuilder<any, any, any>) => ({
         machines: machineData,
       },
     }),
-    invalidatesTags: [{ type: 'History', id: 'LIST' }], // validate with user list - refresh user list
+    invalidatesTags: [{ type: 'History', id: 'LIST' }], // validate with history list - refresh history list
+  }),
+  recordDataPoint: builder.mutation<any, any>({
+    query: (dataPoint) => ({
+      url: '/data-point',
+      method: 'POST',
+      body: dataPoint,
+    }),
+    invalidatesTags: [{ type: 'DataPoint', id: 'LIST' }], // validate with data point list - refresh data point list
   })
 });

@@ -32,7 +32,7 @@ export const apiSlice = createApi({
     },
     credentials: 'include',
   }),
-  tagTypes: ['History'],
+  tagTypes: ['History', 'DataPoint'],
   endpoints: (builder) => ({
     ...queries(builder),
     ...mutations(builder),
@@ -40,5 +40,8 @@ export const apiSlice = createApi({
 });
 
 export const {
-  useCalculateHealthMutation
+  useCalculateHealthMutation,
+  useRecordDataPointMutation,
+  useGetDataPointsQuery,
+  useGetScoresQuery,
 } = apiSlice;

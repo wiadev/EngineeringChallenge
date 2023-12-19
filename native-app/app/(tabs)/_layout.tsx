@@ -64,6 +64,14 @@ export default function TabLayout() {
           headerRight: () => <Logout />
         }}
       />
+      <Tabs.Screen
+        name='history'
+        options={{
+          title: 'History',
+          tabBarIcon: ({color}) => <TabBarIcon name='history' color={color} />,
+          headerRight: () => <Logout />
+        }}
+      />
     </Tabs>
   );
 }
